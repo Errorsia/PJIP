@@ -40,7 +40,7 @@ class JIVLogic:
                 print("Run without admin")
         else:
             print('Run as admin')
-        self.check_update()
+        # self.check_update()
 
         self.system_info = self.get_system_info()
         key_path = r"SOFTWARE\TopDomain\e-Learning Class Standard\1.00"
@@ -174,14 +174,20 @@ class JIVLogic:
             ctypes.windll.user32.SetWindowDisplayAffinity(int(hwnd), 0)
 
     @staticmethod
-    def get_studentmain_state():
-        process_name = 'studentmain.exe'
+    def get_process_state(process_name = 'studentmain.exe'):
+        if not process_name.lower().endswith(".exe"):
+            process_name += ".exe"
+
+        # for proc in psutil.process_iter(['name']):
+        #     if proc.info['name'] and proc.info['name'].lower() == process_name.lower():
+        #         return True
+
         process_iter = psutil.process_iter()
         for proc in process_iter:
             try:
                 if proc.name().lower() == process_name.lower():
                     return True
-            except (psutil.NoSuchProcess, psutil.AccessDenied):
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 continue
 
         return False
@@ -420,7 +426,7 @@ class JIVLogic:
 
         return latest > current
 
-    def topmost_taskmgr(self):
+    def top_taskmgr(self):
         taskmgr_name_chs = {
             "class_name": "TaskManagerWindow",
             "window_name": "任务管理器",
@@ -438,8 +444,10 @@ class JIVLogic:
             except RuntimeError:
                 continue
 
-        if self.system_info.get("major") == 10:
+        if hwnd is None:
+            raise ValueError('taskmgr not start')
 
+        if self.system_info.get("major") == 10:
             try:
                 hm = win32gui.GetMenu(hwnd)
                 mii,_ = win32gui_struct.EmptyMENUITEMINFO()
@@ -459,6 +467,10 @@ class JIVLogic:
         if hwnd == 0:
             raise RuntimeError("Window not found")
         return hwnd
+
+    @staticmethod
+    def start_file(file_name):
+        os.startfile(file_name)
 
 # self.floatwin.setText(
 #     f"窗口标题：{GetWindowText(hwnd)}\n窗口类名：{GetClassName(hwnd)}\n窗口位置：{str(GetWindowRect(hwnd))}\n窗口句柄：{int(hwnd)}\n窗口进程：{procname}")
