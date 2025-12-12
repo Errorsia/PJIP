@@ -79,6 +79,61 @@ class AdapterManager(QObject):
     def suspend_resume_studentmain(self):
         self.suspend_studentmain_adapter.start()
 
+    # def run_taskmgr(self):
+    #     thread = QThread()
+    #     self.run_taskmgr_adapter.moveToThread(thread)
+    #
+    #     thread.started.connect(self.run_taskmgr_adapter.start)
+    #     # Wrap with lambda and send the adapter class name and result together
+    #     self.run_taskmgr_adapter.changed.connect(lambda result, w=self.run_taskmgr_adapter:
+    #                             self.ui_change.emit(type(w).__name__, result))
+    #
+    #     self.run_taskmgr_adapter.finished.connect(self.run_taskmgr_adapter.stop)
+    #     self.run_taskmgr_adapter.finished.connect(thread.quit)
+    #     self.run_taskmgr_adapter.finished.connect(
+    #         self.run_taskmgr_adapter.moveToThread(QApplication.instance().thread()))
+    #     thread.finished.connect(thread.deleteLater)
+    #
+    #     thread.start()
+
+    # def run_taskmgr(self):
+    #     adapter = RunTaskmgrAdapter(self.logic)  # 每次新建
+    #     thread = QThread()
+    #     adapter.moveToThread(thread)
+    #
+    #     thread.started.connect(adapter.start)
+    #     adapter.finished.connect(adapter.stop)
+    #     adapter.finished.connect(thread.quit)
+    #     thread.finished.connect(thread.deleteLater)
+    #     adapter.finished.connect(adapter.deleteLater)
+    #
+    #     adapter.changed.connect(lambda result, w=adapter:
+    #                             self.ui_change.emit(type(w).__name__, result))
+    #
+    #     adapter.request_top.connect(self.logic.top_taskmgr)
+    #
+    #     thread.start()
+
+    def run_taskmgr(self):
+        adapter = RunTaskmgrAdapter(self.logic)
+        thread = QThread()
+        adapter.moveToThread(thread)
+
+        thread.started.connect(adapter.start)
+        adapter.finished.connect(adapter.stop)
+        adapter.finished.connect(thread.quit)
+
+        adapter.finished.connect(lambda: self.cleanup_on_demand(adapter, thread))
+
+        adapter.changed.connect(lambda result, w=adapter:
+                                self.ui_change.emit(type(w).__name__, result))
+        adapter.request_top.connect(lambda : print('Topmost taskmgr triggered'))
+        adapter.request_top.connect(self.logic.top_taskmgr)
+
+        self.on_demand_objects[adapter] = thread
+
+        thread.start()
+
 
 class BaseAdapterInterface:
     def start(self):
