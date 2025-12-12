@@ -54,6 +54,22 @@ class AdapterManager(QObject):
             adapter.stop()
             thread.quit()
             thread.wait()
+            adapter.deleteLater()
+            thread.deleteLater()
+
+    def pop_ondemand_object(self, adapter):
+        if adapter in self.on_demand_objects:
+            return self.on_demand_objects.pop(adapter, None)
+        # if thread in self.on_demand_objects:
+        #     self.on_demand_objects.pop(thread)
+        # adapter.deleteLater() 和 thread.deleteLater() 已经在上面 connect 过了
+
+    def cleanup_on_demand(self, adapter, thread):
+        self.pop_ondemand_object(adapter)
+        adapter.moveToThread(QApplication.instance().thread())
+        adapter.deleteLater()
+        thread.deleteLater()
+
     def terminate_studentmain(self):
         self.terminate_adapter.start()
 
