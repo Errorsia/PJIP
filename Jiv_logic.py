@@ -15,6 +15,7 @@ import win32api
 import win32com.client
 import win32con
 import win32gui
+import win32gui_struct
 import win32process
 from packaging import version
 
@@ -39,6 +40,7 @@ class JIVLogic:
                 print("Run without admin")
         else:
             print('Run as admin')
+        # self.check_update()
 
         self.system_info = self.get_system_info()
         key_path = r"SOFTWARE\TopDomain\e-Learning Class Standard\1.00"
@@ -172,14 +174,20 @@ class JIVLogic:
             ctypes.windll.user32.SetWindowDisplayAffinity(int(hwnd), 0)
 
     @staticmethod
-    def get_studentmain_state():
-        process_name = 'studentmain.exe'
+    def get_process_state(process_name='studentmain.exe'):
+        if not process_name.lower().endswith(".exe"):
+            process_name += ".exe"
+
+        # for proc in psutil.process_iter(['name']):
+        #     if proc.info['name'] and proc.info['name'].lower() == process_name.lower():
+        #         return True
+
         process_iter = psutil.process_iter()
         for proc in process_iter:
             try:
                 if proc.name().lower() == process_name.lower():
                     return True
-            except (psutil.NoSuchProcess, psutil.AccessDenied):
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 continue
 
         return False
@@ -250,7 +258,7 @@ class JIVLogic:
                 exe_name = win32process.GetModuleFileNameEx(h_process, 0)
                 if exe_name.lower().endswith(process_name.lower()):
                     return pid
-            except pywintypes.error as err: # type: ignore
+            except pywintypes.error as err:  # type: ignore
                 # Insufficient permissions, permission denied or the process has exited
                 print(f"pywintypes.error for PID {pid}: {err}")
                 continue
@@ -418,7 +426,55 @@ class JIVLogic:
 
         return latest > current
 
+    def top_taskmgr(self):
+        taskmgr_name_chs = {
+            "class_name": "TaskManagerWindow",
+            "window_name": "任务管理器",
+        }
+        taskmgr_name_list = [taskmgr_name_chs]
+
+        hwnd = None
+
+        for taskmgr_name in taskmgr_name_list:
+            try:
+                hwnd = self.find_window(taskmgr_name.get("class_name"),
+                                        taskmgr_name.get("window_name")
+                                        )
+                if hwnd: break
+            except RuntimeError:
+                continue
+
+        if hwnd is None:
+            raise ValueError('taskmgr not start')
+
+        if self.system_info.get("major") == 10:
+            try:
+                hm = win32gui.GetMenu(hwnd)
+                mii, _ = win32gui_struct.EmptyMENUITEMINFO()
+                win32gui.GetMenuItemInfo(hm, 0x7704, False, mii)
+                if list(win32gui_struct.UnpackMENUITEMINFO(mii))[1] == 0:
+                    win32gui.PostMessage(hwnd, win32con.WM_COMMAND, 0x7704, 0)
+            except PermissionError as err:
+                print('An error occurred:', err)
+            except pywintypes.error as err:  # type: ignore
+                print('An error occurred:', err)
+                self.set_window_top_most(hwnd)
+
+        else:
+            self.set_window_top_most(hwnd)
+
+    @staticmethod
+    def find_window(class_name=None, window_name=None):
+        if not class_name and not window_name:
+            raise ValueError("Must provide class_name or window_name")
+        hwnd = win32gui.FindWindow(class_name, window_name)
+        if hwnd == 0:
+            raise RuntimeError("Window not found")
+        return hwnd
+
+    @staticmethod
+    def start_file(file_name):
+        os.startfile(file_name)
 
 # self.floatwin.setText(
 #     f"窗口标题：{GetWindowText(hwnd)}\n窗口类名：{GetClassName(hwnd)}\n窗口位置：{str(GetWindowRect(hwnd))}\n窗口句柄：{int(hwnd)}\n窗口进程：{procname}")
-
