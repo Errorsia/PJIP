@@ -37,7 +37,7 @@ class MainWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.studentmain_state = None
-        self.kill_run_btn = self.suspend_resume_btn = None
+        self.kill_run_btn = self.suspend_resume_btn = self.run_taskmgr_btn = None
         self.label_studentmain_state = None
         self.adapter = None
         self.init_ui()
@@ -72,7 +72,7 @@ class MainWidget(QWidget):
         self.run_taskmgr_btn.clicked.connect(self.run_taskmgr)
 
         test_button = QPushButton("Test")
-        test_button.clicked.connect(lambda : print('Test button triggered'))
+        test_button.clicked.connect(lambda: print('Test button triggered'))
 
         for i, btn in enumerate([self.kill_run_btn, self.suspend_resume_btn, self.run_taskmgr_btn, test_button]):
             btn.setMinimumHeight(50)
@@ -112,12 +112,11 @@ class MainWidget(QWidget):
             case 'SuspendMonitorAdapter':
                 self.set_studentmain_suspend_state(value)
 
-
     def set_studentmain_state(self, state):
         status = "not running" if not state else "running"
         self.label_studentmain_state.setText(f"Studentmain: {status}")
         self.studentmain_state = state
-        
+
         if state:
             self.label_studentmain_state.setStyleSheet("""
                                         background-color: #FFE5E0; 
@@ -136,7 +135,6 @@ class MainWidget(QWidget):
                                         color: #16DC2D;   
                                         """)
             self.kill_run_btn.setText("Run studentmain")
-
 
     def handle_studentmain(self):
         if self.studentmain_state:
