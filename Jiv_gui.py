@@ -114,6 +114,23 @@ class MainWidgetTemp(QWidget):
         self.sidebar.setFixedHeight(self.SIDEBAR_HEIGHT)
         self.sidebar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
+        self.sidebar.setObjectName("sidebar")
+        self.sidebar.setStyleSheet("""
+            #sidebar {
+                border-bottom: 1px solid #cccccc;
+            }
+        """)
+
+        # Stack pages
+        self.pages = QStackedWidget()
+
+        self.button_group.idClicked.connect(self.pages.setCurrentIndex)
+
+        main_layout.addWidget(self.sidebar)
+        main_layout.addWidget(self.pages, 1)
+
+        self.setLayout(main_layout)
+
 
 class ToolkitPage(QWidget):
     def __init__(self):
