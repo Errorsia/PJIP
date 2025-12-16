@@ -1,5 +1,6 @@
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QPushButton, QGridLayout, QVBoxLayout, QHBoxLayout
+from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QPushButton, QGridLayout, QVBoxLayout, QHBoxLayout, \
+    QSizePolicy, QStackedWidget, QLayout, QButtonGroup
 
 from Jiv_enmus import SuspendState
 
@@ -11,7 +12,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.initialization_window()
 
-        self.adapter = None
+        # self.adapter = None
 
         # Set central widget
         self.main_widget = MainWidget()
@@ -29,10 +30,10 @@ class MainWindow(QMainWindow):
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
 
     def adapter_signal_connect(self, adapter):
-        self.adapter = adapter
+        # self.adapter = adapter
         self.main_widget.adapter_signal_connect(adapter)
 
-class MainWidgetTemp(QWidget):
+class MainWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.BTN_HEIGHT = 32
@@ -61,7 +62,7 @@ class MainWidgetTemp(QWidget):
 
         self.tabs = [
             "Tools",
-            "Settings",
+            # "Settings",
             "Info"
         ]
 
@@ -130,6 +131,10 @@ class MainWidgetTemp(QWidget):
         main_layout.addWidget(self.pages, 1)
 
         self.setLayout(main_layout)
+
+    def adapter_signal_connect(self, adapter):
+        self.adapter = adapter
+        # self.toolkit_page.adapter_signal_connect(adapter)
 
 
 class ToolkitPage(QWidget):
@@ -231,7 +236,8 @@ class ToolkitPage(QWidget):
                                         border-radius: 10px;
                                         font-size: 24px;
                                         border: 3px solid #cccccc;
-                                        color: #16DC2D;   
+                                        /* color: #16DC2D;   */
+                                        color: green;
                                         """)
             self.kill_run_btn.setText("Run studentmain")
 
@@ -259,3 +265,31 @@ class ToolkitPage(QWidget):
         self.run_taskmgr_btn.setDisabled(True)
         self.adapter.run_taskmgr()
         self.run_taskmgr_btn.setEnabled(True)
+
+
+class UpdatingPage(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.updating_label = None
+
+        self.init_ui()
+
+    def init_ui(self):
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(5, 5, 5, 5)
+        main_layout.setSpacing(5)
+
+        self.updating_label = QLabel()
+        self.updating_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.updating_label.setText('Updating')
+        self.updating_label.setStyleSheet("""
+                                        background-color: #efefef; 
+                                        border-radius: 10px;
+                                        font-size: 24px;
+                                        border: 3px solid #cccccc;
+                                        color: green;   
+                                        """)
+
+        main_layout.addWidget(self.updating_label)
+        self.setLayout(main_layout)
+
