@@ -39,11 +39,11 @@ class MainWidget(QWidget):
         super().__init__()
         self.adapter = None
 
-        self.BTN_HEIGHT = 32
-        self.BTN_WIDTH = int(self.BTN_HEIGHT * 2)
+        self.TASKBAR_BTN_HEIGHT = 32
+        self.TASKBAR_BTN_WIDTH = int(self.TASKBAR_BTN_HEIGHT * 2)
         self.SPACING = 4
 
-        self.SIDEBAR_HEIGHT = self.BTN_HEIGHT + self.SPACING * 2  # Fixed height
+        self.SIDEBAR_HEIGHT = self.TASKBAR_BTN_HEIGHT + self.SPACING * 2  # Fixed height
 
         self.sidebar = self.sidebar_layout = None
         self.tabs = self.button_group = None
@@ -77,7 +77,7 @@ class MainWidget(QWidget):
         base_btn_style = f"""
             QPushButton {{
                 background-color: #e6e6e6;
-                border-radius: {self.BTN_HEIGHT // 4}px; 
+                border-radius: {self.TASKBAR_BTN_HEIGHT // 4}px; 
                 padding: 0px;
                 font-weight: bold; 
             }}
@@ -103,7 +103,7 @@ class MainWidget(QWidget):
 
         for i, name in enumerate(self.tabs):
             btn = QPushButton(name)
-            btn.setFixedSize(self.BTN_WIDTH, self.BTN_HEIGHT)
+            btn.setFixedSize(self.TASKBAR_BTN_WIDTH, self.TASKBAR_BTN_HEIGHT)
             btn.setCheckable(True)
             btn.setCursor(Qt.CursorShape.PointingHandCursor)
             btn.setStyleSheet(base_btn_style)
@@ -148,10 +148,22 @@ class MainWidget(QWidget):
 
     def adapter_signal_connect(self, adapter):
         self.adapter = adapter
-        self.toolkit_page.adapter_signal_connect(adapter)
+        self.adapter.ui_change.connect(self.signal_handler)
+
+        self.toolkit_page.set_adapter(self.adapter)
+
+    def signal_handler(self, name, value):
+        print(f'Signal in main widget: {name}, {value}')
+        match name:
+            case 'MonitorAdapter':
+                self.toolkit_page.ui_change.emit(name, value)
+            case 'SuspendMonitorAdapter':
+                self.toolkit_page.ui_change.emit(name, value)
 
 
 class ToolkitPage(QWidget):
+    ui_change = Signal(str, object)
+
     def __init__(self):
         super().__init__()
         self.studentmain_state = None
@@ -159,6 +171,8 @@ class ToolkitPage(QWidget):
         self.label_studentmain_state = None
         self.adapter = None
         self.init_ui()
+
+        self.signal_connect()
 
     def init_ui(self):
         main_layout = QVBoxLayout()
@@ -218,17 +232,19 @@ class ToolkitPage(QWidget):
 
         self.setLayout(main_layout)
 
-    def adapter_signal_connect(self, adapter):
-        self.adapter = adapter
-        self.adapter.ui_change.connect(self.signal_handler)
+    def signal_connect(self):
+        self.ui_change.connect(self.signal_handler)
 
     def signal_handler(self, name, value):
-        print(f'Signal: {name}, {value}')
+        print(f'Signal in toolkit page: {name}, {value}')
         match name:
             case 'MonitorAdapter':
                 self.set_studentmain_state(value)
             case 'SuspendMonitorAdapter':
                 self.set_studentmain_suspend_state(value)
+
+    def set_adapter(self, adapter):
+        self.adapter = adapter
 
     def set_studentmain_state(self, state):
         status = "not running" if not state else "running"
