@@ -148,7 +148,7 @@ class MonitorAdapter(QObject, BaseAdapterInterface):
             self.change.emit(state)
 
     def check_state(self):
-        return self.logic.get_process_state(Jiv_build_config.E_CLASSROOM_NAME)
+        return self.logic.get_process_state(Jiv_build_config.E_CLASSROOM_PROGRAM_NAME)
 
 
 class SuspendMonitorAdapter(QObject, BaseAdapterInterface):
@@ -179,7 +179,7 @@ class SuspendMonitorAdapter(QObject, BaseAdapterInterface):
         """
         :return: Studentmain suspend state
         """
-        pid = self.logic.get_pid_form_process_name(Jiv_build_config.E_CLASSROOM_NAME)
+        pid = self.logic.get_pid_form_process_name(Jiv_build_config.E_CLASSROOM_PROGRAM_NAME)
         if pid is None:
             return SuspendState.NOT_FOUND
         if self.logic.is_suspended(pid):
@@ -276,14 +276,14 @@ class TerminateAdapter:
         self.run_task()
 
     def run_task(self):
-        pid = self.logic.get_pid_form_process_name(Jiv_build_config.E_CLASSROOM_NAME)
+        pid = self.logic.get_pid_form_process_name(Jiv_build_config.E_CLASSROOM_PROGRAM_NAME)
         if pid is None:
-            print(f'{Jiv_build_config.E_CLASSROOM_NAME} not found')
+            print(f'{Jiv_build_config.E_CLASSROOM_PROGRAM_NAME} not found')
             return
         self.logic.terminate_process(pid)
 
     def check_state(self):
-        return self.logic.get_process_state(Jiv_build_config.E_CLASSROOM_NAME)
+        return self.logic.get_process_state(Jiv_build_config.E_CLASSROOM_PROGRAM_NAME)
 
 
 class StartStudentmainAdapter:
@@ -301,10 +301,10 @@ class SuspendStudentmainAdapter:
         self.logic = logic
 
     def start(self):
-        pid = self.logic.get_pid_form_process_name(Jiv_build_config.E_CLASSROOM_NAME)
+        pid = self.logic.get_pid_form_process_name(Jiv_build_config.E_CLASSROOM_PROGRAM_NAME)
 
         if pid is None:
-            print(f'{Jiv_build_config.E_CLASSROOM_NAME} not found')
+            print(f'{Jiv_build_config.E_CLASSROOM_PROGRAM_NAME} not found')
             return
 
         suspend_state = self.logic.is_suspended(pid)
