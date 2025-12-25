@@ -496,5 +496,57 @@ class JIVLogic:
     def start_file(file_name):
         os.startfile(file_name)
 
+    @staticmethod
+    def clean_ifeo_debuggers():
+        success_flag = True
+        base_path = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options"
+
+        try:
+            base_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, base_path, 0, winreg.KEY_ALL_ACCESS)
+        except PermissionError:
+            print("Permission denied")
+            return
+        except Exception as err:
+            print(f"Cannot open IFEO key: {err}")
+            return
+
+        try:
+            index = 0
+            while True:
+                try:
+                    subkey_name = winreg.EnumKey(base_key, index)
+                    index += 1
+                except OSError:
+                    break  # No subkey
+
+                subkey_path = base_path + "\\" + subkey_name
+
+                try:
+                    subkey = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, subkey_path, 0, winreg.KEY_ALL_ACCESS)
+                except PermissionError:
+                    continue
+                except FileNotFoundError:
+                    continue
+
+                try:
+                    winreg.QueryValueEx(subkey, "debugger")
+                except FileNotFoundError:
+                    winreg.CloseKey(subkey)
+                    continue
+                else:
+                    # Find debugger, delete subkey
+                    winreg.CloseKey(subkey)
+                    try:
+                        winreg.DeleteKey(winreg.HKEY_LOCAL_MACHINE, subkey_path)
+                        print(f"{subkey_name} has been deleted")
+                    except Exception as err:
+                        success_flag = False
+                        print(f"{subkey_name} cannot be deleted: {err}")
+
+        finally:
+            winreg.CloseKey(base_key)
+
+        return success_flag
+
 # self.floatwin.setText(
 #     f"窗口标题：{GetWindowText(hwnd)}\n窗口类名：{GetClassName(hwnd)}\n窗口位置：{str(GetWindowRect(hwnd))}\n窗口句柄：{int(hwnd)}\n窗口进程：{procname}")
