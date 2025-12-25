@@ -209,7 +209,7 @@ class ToolkitPage(QWidget):
     def __init__(self):
         super().__init__()
         self.studentmain_state = None
-        self.kill_run_btn = self.suspend_resume_btn = self.run_taskmgr_btn = None
+        self.kill_run_btn = self.suspend_resume_btn = self.run_taskmgr_btn = self.clean_ifeo_debuggers_btn = None
         self.label_studentmain_state = None
         self.adapter = None
         self.init_ui()
@@ -245,10 +245,14 @@ class ToolkitPage(QWidget):
         self.run_taskmgr_btn = QPushButton("Run Taskmgr")
         self.run_taskmgr_btn.clicked.connect(self.run_taskmgr)
 
-        test_button = QPushButton("Test")
-        test_button.clicked.connect(lambda: print('Test button triggered'))
 
-        for i, btn in enumerate([self.kill_run_btn, self.suspend_resume_btn, self.run_taskmgr_btn, test_button]):
+        self.clean_ifeo_debuggers_btn = QPushButton("Clean IFEO")
+        self.clean_ifeo_debuggers_btn.clicked.connect(self.clean_ifeo_debuggers)
+
+        # test_button = QPushButton("Test")
+        # test_button.clicked.connect(lambda: print('Test button triggered'))
+
+        for i, btn in enumerate([self.kill_run_btn, self.suspend_resume_btn, self.run_taskmgr_btn, self.clean_ifeo_debuggers_btn]):
             btn.setMinimumHeight(50)
             button_layout.addWidget(btn, i // 2, i % 2)
             btn.setStyleSheet("""
@@ -278,7 +282,6 @@ class ToolkitPage(QWidget):
         self.ui_change.connect(self.signal_handler)
 
     def signal_handler(self, name, value):
-        # print(f'Signal in toolkit page: {name}, {value}')
         match name:
             case 'MonitorAdapter':
                 self.set_studentmain_state(value)
@@ -338,6 +341,9 @@ class ToolkitPage(QWidget):
         self.adapter.run_taskmgr()
         self.run_taskmgr_btn.setEnabled(True)
 
+    def clean_ifeo_debuggers(self):
+        self.adapter.clean_ifeo_debuggers()
+
 
 class UpdatePage(QWidget):
     ui_change = Signal(str, object)
@@ -346,6 +352,7 @@ class UpdatePage(QWidget):
         super().__init__()
         self.studentmain_state = None
         self.update_state_label = None
+        self.current_version_label = None
         self.get_update_btn = None
         self.adapter = None
         self.current_version = None

@@ -104,6 +104,7 @@ class AdapterManager(QObject):
 
     def clean_ifeo_debuggers(self):
         self.clean_ifeo_debuggers_adapter.start()
+        print('ifeo cleaned')
 
     def get_update(self):
         if self.update_adapter.is_running():
