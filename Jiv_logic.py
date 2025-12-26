@@ -33,6 +33,7 @@ class JIVLogic:
         self.preparation()
 
     def preparation(self):
+        self.check_operate_system()
         self.authority_admin = self.is_admin()
         if not self.authority_admin:
             if self.privilege_escalation():
