@@ -245,14 +245,14 @@ class ToolPage(QWidget):
         self.run_taskmgr_btn = QPushButton("Run Taskmgr")
         self.run_taskmgr_btn.clicked.connect(self.run_taskmgr)
 
-
         self.clean_ifeo_debuggers_btn = QPushButton("Clean IFEO")
         self.clean_ifeo_debuggers_btn.clicked.connect(self.clean_ifeo_debuggers)
 
         # test_button = QPushButton("Test")
         # test_button.clicked.connect(lambda: print('Test button triggered'))
 
-        for i, btn in enumerate([self.kill_run_btn, self.suspend_resume_btn, self.run_taskmgr_btn, self.clean_ifeo_debuggers_btn]):
+        for i, btn in enumerate(
+                [self.kill_run_btn, self.suspend_resume_btn, self.run_taskmgr_btn, self.clean_ifeo_debuggers_btn]):
             btn.setMinimumHeight(50)
             button_layout.addWidget(btn, i // 2, i % 2)
             btn.setStyleSheet("""
@@ -350,6 +350,7 @@ class SettingsPage(QWidget):
 
     def __init__(self):
         super().__init__()
+        self.terminate_options = None
         self.adapter = None
         self.init_ui()
 
@@ -359,6 +360,7 @@ class SettingsPage(QWidget):
         main_layout.setSpacing(5)
 
         self.terminate_options = QWidget()
+        self.terminate_options.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.terminate_options.setObjectName("terminate_options_frame")
 
         self.terminate_options.setStyleSheet("""
@@ -366,7 +368,7 @@ class SettingsPage(QWidget):
                         background-color: #eeeeee; 
                         border-radius: 10px;
                         font-size: 24px;
-                        border: 4px solid #cccccc;
+                        border: 2px solid #bbbbbb;
                         color: #455A64;   
                     }
                     
@@ -380,18 +382,18 @@ class SettingsPage(QWidget):
                 """)
 
         terminate_options_frame_layout = QVBoxLayout(self.terminate_options)
-        terminate_options_frame_layout.setContentsMargins(5, 5, 5, 5)
-        terminate_options_frame_layout.setSpacing(5)
+        terminate_options_frame_layout.setContentsMargins(15, 5, 5, 5)
+        terminate_options_frame_layout.setSpacing(3)
 
         label_terminate_options = QLabel()
         label_terminate_options.setStyleSheet("""
                                             background-color: #eeeeee; 
                                             border-radius: 10px;
-                                            font-size: 22px;
+                                            font-size: 20px;
                                             color: #455A64;   
                                             """)
         label_terminate_options.setText(f'Terminate options')
-        label_terminate_options.setFixedHeight(35)
+        label_terminate_options.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
         terminate_options_group = QButtonGroup()
         terminate_options_group.setExclusive(True)
@@ -399,8 +401,10 @@ class SettingsPage(QWidget):
         opt1 = QRadioButton("TerminateProcess")
         opt1.toggled.connect(lambda checked: print("Btn 1 State:", checked))
         opt1.setChecked(True)
+        opt1.setDisabled(True)
         opt2 = QRadioButton("NtTerminateProcess")
         opt2.toggled.connect(lambda checked: print("Btn 2 State:", checked))
+        opt2.setDisabled(True)
         # opt3 = QRadioButton("Option C")
 
         terminate_options_group.addButton(opt1)
@@ -413,6 +417,7 @@ class SettingsPage(QWidget):
         # terminate_options_frame_layout.addWidget(opt3)
 
         main_layout.addWidget(self.terminate_options)
+        main_layout.addStretch(1)
 
         self.setLayout(main_layout)
 
@@ -446,7 +451,7 @@ class UpdatePage(QWidget):
                                     background-color: #eeeeee; 
                                     border-radius: 10px;
                                     font-size: 24px;
-                                    border: 3px solid #cccccc;
+                                    border: 2px solid #cccccc;
                                     color: #455A64;   
                                     """)
         self.current_version_label.setText(f'Current version: N / a')
@@ -460,7 +465,7 @@ class UpdatePage(QWidget):
                                     background-color: #eeeeee; 
                                     border-radius: 10px;
                                     font-size: 24px;
-                                    border: 3px solid #cccccc;
+                                    border: 2px solid #cccccc;
                                     color: #455A64;   
                                     """)
         self.update_state_label.setText(f'Getting updates')
