@@ -358,7 +358,13 @@ class JIVLogic:
     #     print("Failed to open process")
 
     def nt_terminate_process(self, pid):
-        self.nt_terminate_process.terminate(pid)
+        try:
+            self.nt_terminate_process.terminate(pid)
+        except RuntimeError as err:
+            print(err)
+            return False
+        else:
+            return True
 
     @staticmethod
     def is_suspended(pid):
