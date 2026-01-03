@@ -3,8 +3,8 @@
 
 from PySide6.QtCore import QObject, Signal, QTimer, QThread
 
-import Jiv_build_config
-from Jiv_enmus import SuspendState
+from jiv.config import Jiv_build_config
+from jiv.core.enums.Jiv_enums import SuspendState
 
 
 class AdapterManager(QObject):

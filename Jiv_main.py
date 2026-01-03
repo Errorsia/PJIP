@@ -2,11 +2,10 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-import Jiv_logic
-import Jiv_adapter
-import Jiv_gui
-import Jiv_service
-import Jiv_build_config
+from jiv.core import Jiv_logic, Jiv_service
+from jiv.gui import adapter
+from jiv.gui import gui
+from jiv.config import Jiv_build_config
 
 
 class JIVMain:
@@ -14,8 +13,8 @@ class JIVMain:
         self.app = QApplication(sys.argv)
 
         self.logic = Jiv_logic.JIVLogic(Jiv_build_config)
-        self.gui = Jiv_gui.MainWindow()
-        self.adapters = Jiv_adapter.AdapterManager(self.logic, self.gui)
+        self.gui = gui.MainWindow()
+        self.adapters = adapter.AdapterManager(self.logic, self.gui)
         self.gui.adapter_signal_connect(self.adapters)
 
         self.gui.show()

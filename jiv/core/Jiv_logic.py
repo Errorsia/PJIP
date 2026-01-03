@@ -19,7 +19,7 @@ import win32gui_struct
 import win32process
 from packaging import version
 
-from Jiv_enmus import UpdateState
+from jiv.core.enums.Jiv_enums import UpdateState
 
 
 class JIVLogic:
