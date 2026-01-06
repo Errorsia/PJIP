@@ -1,6 +1,5 @@
-PROJECT_NAME = 'Jiyu Immunodeficiency Virus'
-
-# TODO: JIP?
+PROJECT_NAME = 'Jiyu Immunodeficiency Program'
+PROJECT_NAME_ABBREVIATION = "PJIP"
 
 MAJOR_VER = 0
 MINOR_VER = 4
@@ -34,4 +33,4 @@ E_CLASSROOM_NAME = 'studentmain'
 E_CLASSROOM_PROGRAM_NAME = E_CLASSROOM_NAME + '.exe'
 
 # CODE_NAME = ''
-# NICKNAME = ''
+NICKNAME = PROJECT_NAME_ABBREVIATION
