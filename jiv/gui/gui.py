@@ -416,6 +416,7 @@ class FunctionsPage(QWidget):
 
         self.terminate_btn = QPushButton("Kill Process")
         self.terminate_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self.terminate_btn.clicked.connect(self.on_terminate_clicked)
 
         self.terminate_box_layout.addWidget(self.process_input)
         self.terminate_box_layout.addWidget(self.terminate_btn)
