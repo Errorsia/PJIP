@@ -348,6 +348,12 @@ class ToolPage(QWidget):
         self.adapter.clean_ifeo_debuggers()
 
 
+class FunctionsPage(QWidget):
+    ui_change = Signal(str, object)
+
+    def __init__(self):
+        super().__init__()
+        self.adapter = None
 class SettingsPage(QWidget):
     ui_change = Signal(str, object)
 
