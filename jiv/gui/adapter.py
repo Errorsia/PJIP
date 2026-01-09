@@ -85,7 +85,7 @@ class AdapterManager(QObject):
             thread.deleteLater()
 
     def terminate_studentmain(self):
-        self.terminate_process_adapter.start()
+        self.terminate_process_adapter.trigger_run.emit(build_config.E_CLASSROOM_PROGRAM_NAME)
 
     def start_studentmain(self):
         self.start_adapter.start()
@@ -328,10 +328,11 @@ class TerminateCustomProcessAdapter(QObject):
 
 class TerminateProcessAdapter(QObject):
     change = Signal()
-    trigger_run = Signal()
+    trigger_run = Signal(str)
 
     def __init__(self, logic, terminate_pid_adapter):
         super().__init__()
+        self.running = None
         self.logic = logic
         self.last_result = None
         self.terminate_pid_adapter = terminate_pid_adapter
@@ -342,23 +343,19 @@ class TerminateProcessAdapter(QObject):
     def stop(self):
         self.running = False
 
-
     def run_task(self, process_name=build_config.E_CLASSROOM_PROGRAM_NAME):
         self.running = True
         pids = self.logic.get_pid_from_process_name(process_name)
         self.terminate_pid_adapter.trigger_run.emit(pids)
         self.stop()
 
-    def check_state(self):
-        return self.logic.get_process_state(build_config.E_CLASSROOM_PROGRAM_NAME)
-
-
 class TerminatePIDAdapter(QObject):
     change = Signal()
-    trigger_run = Signal()
+    trigger_run = Signal(tuple)
 
     def __init__(self, logic):
         super().__init__()
+        self.running = None
         self.logic = logic
         self.last_result = None
 
@@ -375,9 +372,6 @@ class TerminatePIDAdapter(QObject):
 
         for pid in pids:
             self.logic.terminate_process(pid)
-
-    def check_state(self):
-        return self.logic.get_process_state(build_config.E_CLASSROOM_PROGRAM_NAME)
 
 
 class StartStudentmainAdapter:
