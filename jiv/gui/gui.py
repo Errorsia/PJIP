@@ -169,6 +169,7 @@ class MainWidget(QWidget):
         self.adapter.ui_change.connect(self.signal_handler)
 
         self.toolkit_page.set_adapter(self.adapter)
+        self.functions_page.set_adapter(self.adapter)
         self.update_page.set_adapter(self.adapter)
 
     def signal_handler(self, name, value):
@@ -448,12 +449,15 @@ class FunctionsPage(QWidget):
 
         self.setLayout(main_layout)
 
+    def set_adapter(self, adapter):
+        self.adapter = adapter
+
 
     def custom_terminate(self):
         print(f"Textedit size: {self.custom_process_input.size()}")
-        print("Terminate button clicked")
         process_info = self.custom_process_input.text()
-        # self.adapter.
+        print(f"Terminate button clicked, with process info: {process_info}")
+        self.adapter.terminate_custom_process(process_info)
 
 
 
