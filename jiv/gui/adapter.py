@@ -299,6 +299,8 @@ class TerminateCustomProcessAdapter(QObject):
     change = Signal()
     trigger_run = Signal(str)
 
+    MAX_PID = 2_147_483_647
+
     def __init__(self, logic, terminate_pid_adapter, terminate_process_adapter):
         super().__init__()
         # self.running = None
@@ -321,20 +323,27 @@ class TerminateCustomProcessAdapter(QObject):
             print('another getting update is running, exit')
             return
         # self.running = True
-        print(f'process info in runtask: {process_info}')
-        if process_info.isdigit():
+        if self.is_valid_pid(process_info):
             process_pid = int(process_info)
             if self.pid_exists(process_pid):
                 self.terminate_pid(process_pid)
             else:
                 process_name = self.add_exe_suffix(process_info)
-                print(f'terminate process: {process_name}')
                 self.terminate_process(process_name)
 
         else:
             process_name = self.add_exe_suffix(process_info)
             self.terminate_process(process_name)
         self.stop()
+
+    def is_valid_pid(self, s: str) -> bool:
+        if not s.isdigit():
+            return False
+        try:
+            pid = int(s)
+        except ValueError:
+            return False
+        return 0 < pid <= self.MAX_PID
 
     def pid_exists(self, pid: int):
         return self.logic.pid_exists(pid) == PidStatus.EXISTS
@@ -343,6 +352,7 @@ class TerminateCustomProcessAdapter(QObject):
         self.terminate_pid_adapter.run_async((pid, ))
 
     def terminate_process(self, process_name: str):
+        print(f'terminate process: {process_name}')
         self.terminate_process_adapter.run_async(process_name)
 
     @staticmethod

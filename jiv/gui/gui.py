@@ -454,9 +454,7 @@ class FunctionsPage(QWidget):
 
 
     def custom_terminate(self):
-        print(f"Textedit size: {self.custom_process_input.size()}")
         process_info = self.custom_process_input.text()
-        print(f"Terminate button clicked, with process info: {process_info}")
         self.adapter.terminate_custom_process(process_info)
 
 
