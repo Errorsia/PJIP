@@ -30,7 +30,7 @@ class JIVMain:
         sys.exit(self.app.exec())
 
     def handle_close_event(self):
-        self.adapters.stop_all()
+        self.adapters.quit_all()
         self.services.stop_all()
 
 

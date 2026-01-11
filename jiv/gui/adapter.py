@@ -93,7 +93,7 @@ class AdapterManager(QObject):
     def wait_for_pools(self):
         self.terminate_threadpool.waitForDone()
 
-    def program_exit(self):
+    def quit_all(self):
         self.stop_all()
         self.wait_for_pools()
 
@@ -314,27 +314,26 @@ class TerminateCustomProcessAdapter(QObject):
         # self.running = False
         self.trigger_run.connect(self.run_task)
 
-    def stop(self):
-        # self.running = False
-        pass
+    # def stop(self):
+    #     self.running = False
 
     def run_task(self, process_info: str):
-        if self.is_running():
-            print('another getting update is running, exit')
-            return
+        # if self.is_running():
+        #     print('another getting update is running, exit')
+        #     return
         # self.running = True
         if self.is_valid_pid(process_info):
             process_pid = int(process_info)
             if self.pid_exists(process_pid):
                 self.terminate_pid(process_pid)
             else:
-                process_name = self.add_exe_suffix(process_info)
+                process_name = self.handle_process_name(process_info)
                 self.terminate_process(process_name)
 
         else:
-            process_name = self.add_exe_suffix(process_info)
+            process_name = self.handle_process_name(process_info)
             self.terminate_process(process_name)
-        self.stop()
+        # self.stop()
 
     def is_valid_pid(self, s: str) -> bool:
         if not s.isdigit():
@@ -352,19 +351,18 @@ class TerminateCustomProcessAdapter(QObject):
         self.terminate_pid_adapter.run_async((pid, ))
 
     def terminate_process(self, process_name: str):
-        print(f'terminate process: {process_name}')
         self.terminate_process_adapter.run_async(process_name)
 
     @staticmethod
-    def add_exe_suffix(process_name: str) -> str:
+    def handle_process_name(process_name: str) -> str:
+        process_name = process_name.strip()
         if not process_name.lower().endswith(".exe"):
             return process_name + ".exe"
         return process_name
 
-    @staticmethod
-    def is_running():
-        # return self.running
-        return False
+    # @staticmethod
+    # def is_running():
+    #     return self.running
 
 
 # ################
