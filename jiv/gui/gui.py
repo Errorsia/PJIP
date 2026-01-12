@@ -209,7 +209,7 @@ class MainWidget(QWidget):
             """)
 
 class RequireNameMixin:
-    required_methods = ["set_name"]
+    required_methods = ["set_page_name"]
 
     def __init_subclass__(cls):
         super().__init_subclass__()
@@ -223,13 +223,19 @@ class ToolPage(QWidget):
 
     def __init__(self):
         super().__init__()
+        self.page_name = None
         self.studentmain_state = None
         self.kill_run_btn = self.suspend_resume_btn = self.run_taskmgr_btn = self.clean_ifeo_debuggers_btn = None
         self.label_studentmain_state = None
         self.adapter = None
+        self.set_page_name()
         self.init_ui()
 
         self.signal_connect()
+
+    def set_page_name(self):
+        self.page_name = 'Tools'
+        print(self.page_name)
 
     def init_ui(self):
         main_layout = QVBoxLayout()
