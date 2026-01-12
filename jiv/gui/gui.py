@@ -558,11 +558,12 @@ class SettingsPage(QWidget, RequireNameMixin):
         self.setLayout(main_layout)
 
 
-class UpdatePage(QWidget):
+class UpdatePage(QWidget, RequireNameMixin):
     ui_change = Signal(str, object)
 
     def __init__(self):
         super().__init__()
+        self.page_name = None
         self.studentmain_state = None
         self.update_state_label = None
         self.current_version_label = None
@@ -573,6 +574,9 @@ class UpdatePage(QWidget):
         self.init_ui()
 
         self.signal_connect()
+        
+    def set_page_name(self):
+        self.page_name = 'Updates'
 
     def init_ui(self):
         main_layout = QVBoxLayout()
