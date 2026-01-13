@@ -72,7 +72,7 @@ class MainWidget(QWidget):
             "Function",
             "Settings",
             "Updates",
-            "Info"
+            "About"
         ]
 
         self.sidebar_button_group = QButtonGroup(self)
@@ -154,7 +154,7 @@ class MainWidget(QWidget):
         self.pages.addWidget(self.settings_page)
         self.update_page = UpdatePage()
         self.pages.addWidget(self.update_page)
-        self.about_page = PageUpdating()
+        self.about_page = AboutPage()
         self.pages.addWidget(self.about_page)
 
         self.sidebar_button_group.idClicked.connect(self.pages.setCurrentIndex)
@@ -682,7 +682,7 @@ class UpdatePage(QWidget, RequireNameMixin):
             self.update_state_label.setText("Unexpected state. Please contact the developers.")
 
 
-class InfoPage(QWidget, RequireNameMixin):
+class AboutPage(QWidget, RequireNameMixin):
     ui_change = Signal(str, object)
 
     def __init__(self):
