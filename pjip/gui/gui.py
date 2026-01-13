@@ -82,15 +82,6 @@ class MainWidget(QWidget):
             self.about_page,
         ]
 
-
-        self.sidebar_tabs = [
-            "Tools",
-            "Function",
-            "Settings",
-            "Updates",
-            "About"
-        ]
-
         self.sidebar_button_group = QButtonGroup(self)
         self.sidebar_button_group.setExclusive(True)
 
@@ -163,11 +154,8 @@ class MainWidget(QWidget):
 
         # Stack stack_pages
         self.stack_pages = QStackedWidget()
-        self.stack_pages.addWidget(self.tool_page)
-        self.stack_pages.addWidget(self.functions_page)
-        self.stack_pages.addWidget(self.settings_page)
-        self.stack_pages.addWidget(self.update_page)
-        self.stack_pages.addWidget(self.about_page)
+        for page in self.pages:
+            self.stack_pages.addWidget(page)
         self.sidebar_button_group.idClicked.connect(self.stack_pages.setCurrentIndex)
 
         live_frame_layout.addWidget(self.stack_pages)
