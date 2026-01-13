@@ -51,7 +51,7 @@ class MainWidget(QWidget):
         self.sidebar = self.sidebar_layout = None
         self.sidebar_tabs = self.sidebar_button_group = None
 
-        self.pages = None
+        self.pages = self.stack_pages = None
         self.tool_page = self.functions_page = self.about_page = self.settings_page = self.update_page = None
 
         self.init_ui()
@@ -66,6 +66,22 @@ class MainWidget(QWidget):
         self.sidebar_layout = QHBoxLayout(self.sidebar)
         self.sidebar_layout.setContentsMargins(self.SPACING, self.SPACING, self.SPACING, self.SPACING)
         # self.sidebar_layout.setSpacing(self.SPACING)
+
+        # Init stack_pages
+        self.tool_page = ToolPage()
+        self.functions_page = FunctionsPage()
+        self.settings_page = SettingsPage()
+        self.update_page = UpdatePage()
+        self.about_page = AboutPage()
+
+        self.pages = [
+            self.tool_page,
+            self.functions_page,
+            self.settings_page,
+            self.update_page,
+            self.about_page,
+        ]
+
 
         self.sidebar_tabs = [
             "Tools",
@@ -144,22 +160,16 @@ class MainWidget(QWidget):
         live_frame_layout.setContentsMargins(5, 5, 5, 5)
         live_frame_layout.setSpacing(5)
 
-        # Stack pages
-        self.pages = QStackedWidget()
-        self.tool_page = ToolPage()
-        self.pages.addWidget(self.tool_page)
-        self.functions_page = FunctionsPage()
-        self.pages.addWidget(self.functions_page)
-        self.settings_page = SettingsPage()
-        self.pages.addWidget(self.settings_page)
-        self.update_page = UpdatePage()
-        self.pages.addWidget(self.update_page)
-        self.about_page = AboutPage()
-        self.pages.addWidget(self.about_page)
+        # Stack stack_pages
+        self.stack_pages = QStackedWidget()
+        self.stack_pages.addWidget(self.tool_page)
+        self.stack_pages.addWidget(self.functions_page)
+        self.stack_pages.addWidget(self.settings_page)
+        self.stack_pages.addWidget(self.update_page)
+        self.stack_pages.addWidget(self.about_page)
+        self.sidebar_button_group.idClicked.connect(self.stack_pages.setCurrentIndex)
 
-        self.sidebar_button_group.idClicked.connect(self.pages.setCurrentIndex)
-
-        live_frame_layout.addWidget(self.pages)
+        live_frame_layout.addWidget(self.stack_pages)
 
         main_layout.addWidget(self.sidebar)
         main_layout.addWidget(self.live_frame, 1)
