@@ -2,10 +2,10 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from jiv.core import logic, service
-from jiv.gui import adapter
-from jiv.gui import gui
-from jiv.config import build_config
+from pjip.core import logic, service
+from pjip.gui import adapter
+from pjip.gui import gui
+from pjip.config import build_config
 
 
 class JIVMain:

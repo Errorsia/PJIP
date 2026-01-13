@@ -20,8 +20,8 @@ import win32gui_struct
 import win32process
 from packaging import version
 
-from jiv.core.enums import UpdateState
-from jiv.core.enums import PidStatus
+from pjip.core.enums import UpdateState
+from pjip.core.enums import PidStatus
 
 
 class JIVLogic:
