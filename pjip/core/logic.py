@@ -719,25 +719,40 @@ class PJIPLogic:
         return bytes(out).decode("ascii", errors="ignore")
 
     def decode_studentmain_password(self):
-        data = self.read_registry(
-            r"SOFTWARE\TopDomain\e-Learning Class\Student",
-            "Knock1"
-        )
+        """
+        Read and decrypt the Mythware StudentMain password from the registry.
+        Attempts both 'Knock1' and 'Knock' values under:
+            SOFTWARE\\TopDomain\\e-Learning Class\\Student
+        """
 
-        if data:
-            print("Read successfully:", len(data[0]), "bytes")
+        key_path = r"SOFTWARE\TopDomain\e-Learning Class\Student"
+        value_names = [
+            "Knock1",
+            "Knock"
+        ]
 
-            if data[1] == winreg.REG_BINARY:
-                buf = self.decrypt_knock_value(data[0])
-                print("Decrypted buffer:", buf)
+        for value_name in value_names:
+            data = self.read_registry(
+                key_path,
+                value_name
+            )
 
-                dec = self.extract_utf16_ascii(buf)
-                print("Final password:", dec)
-                return dec
+            if data:
+                print("Read successfully:", len(data[0]), "bytes")
+
+                if data[1] == winreg.REG_BINARY:
+                    buf = self.decrypt_knock_value(data[0])
+                    print("Decrypted buffer:", buf)
+
+                    dec = self.extract_utf16_ascii(buf)
+                    print("Final password:", dec)
+                    return dec
+                else:
+                    print("Incorrect registry value type (expected REG_BINARY)")
             else:
-                print("Incorrect registry value type (expected REG_BINARY)")
-        else:
-            print("Value not found or invalid")
+                print("Value not found or invalid")
+
+        return None
 
 
 class NativeTerminator:
