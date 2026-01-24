@@ -248,7 +248,7 @@ class GetStudentmainPasswordAdapter(QObject, BaseAdapterInterface):
 
     def run_task(self):
         state = self.get_studentmain_password()
-        if state is not self.last_result:
+        if state != self.last_result:
             self.last_result = state
             self.change.emit(state)
 
