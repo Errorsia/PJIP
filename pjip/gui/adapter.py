@@ -2,6 +2,7 @@
 # from threading import Thread
 
 from PySide6.QtCore import QObject, Signal, QTimer, QThread, QRunnable, QThreadPool
+from PySide6.QtGui import QGuiApplication
 
 from pjip.config import build_config
 from pjip.core.enums import SuspendState, PidStatus
@@ -507,3 +508,10 @@ class CleanIFEODebuggersAdapter:
 
     def start(self):
         self.logic.clean_ifeo_debuggers()
+
+class CopyToClipboardAdapter:
+    def __init__(self):
+        self.clipboard = QGuiApplication.clipboard()
+
+    def copy_to_clipboard(self, content: str):
+        self.clipboard.setText(content)
