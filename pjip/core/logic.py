@@ -431,7 +431,7 @@ class PJIPLogic:
     # else:
     #     print("Failed to open process")
 
-    def nt_terminate_process(self, pid):
+    def nt_terminate_process(self, pid: int):
         try:
             self.nt_terminate_process.terminate(pid)
         except RuntimeError as err:
@@ -441,7 +441,7 @@ class PJIPLogic:
             return True
 
     @staticmethod
-    def is_suspended(pid):
+    def is_suspended(pid: int):
         """
         whether the certain programme is suspended
         :param pid: pid of programme
@@ -454,7 +454,7 @@ class PJIPLogic:
             return False
 
     @staticmethod
-    def suspend_process(pid):
+    def suspend_process(pid: int):
         try:
             p = psutil.Process(pid)
             p.suspend()
@@ -467,7 +467,7 @@ class PJIPLogic:
             return False
 
     @staticmethod
-    def resume_process(pid):
+    def resume_process(pid: int):
         try:
             p = psutil.Process(pid)
             p.resume()
