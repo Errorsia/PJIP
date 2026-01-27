@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QApplication
 
 from pjip.core import logic, service
 from pjip.config.runtime_status import RuntimeStatus
-from pjip.gui import AdapterManager
+from pjip.adapter import AdapterManager
 from pjip.gui import gui
 from pjip.config import build_config
 
