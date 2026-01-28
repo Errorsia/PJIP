@@ -1,6 +1,7 @@
+from PySide6.QtCore import QThread
 
 
-class PollingManager: # QObjec
+class PollingManager: # QObject
     def __init__(self):
         # super().__init__()
         self.adapters = []
@@ -30,4 +31,6 @@ class PollingManager: # QObjec
 
     def get_adapter(self, cls):
         for a in self.adapters:
-            a.stop()
+            if isinstance(a, cls):
+                return a
+        return None
