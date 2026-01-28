@@ -46,11 +46,9 @@ class AdapterManager(QObject):
         self.lifelong_adapters.append(self.update_adapter)
 
         self.terminate_pid_adapter = TerminatePIDAdapter(self.logic, self.runtime_status.pid, self.terminate_threadpool)
-        # self.lifelong_adapters.append(self.terminate_pid_adapter)
 
         self.terminate_process_adapter = TerminateProcessAdapter(self.logic, self.runtime_status.current_process_name,
                                                                  self.terminate_pid_adapter)
-        # self.lifelong_adapters.append(self.terminate_process_adapter)
 
         self.run_taskmgr_adapter = RunTaskmgrAdapter(self.logic)
 
@@ -154,21 +152,6 @@ class AdapterManager(QObject):
 
     def copy_to_clipboard(self, content):
         self.copy_to_clipboard_adapter.copy_to_clipboard(content)
-
-class PollingManager:
-    def __init__(self, /):
-        self.adapters = []
-
-    def add(self, adapter):
-        self.adapters.append(adapter)
-
-    def start(self):
-        for a in self.adapters:
-            a.start()
-
-    def stop(self):
-        for a in self.adapters:
-            a.stop()
 
 
 class RunTaskmgrAdapter(QObject):
