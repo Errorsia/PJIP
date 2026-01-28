@@ -1,15 +1,24 @@
 
 
-class PollingManager:
-    def __init__(self, /):
+class PollingManager: # QObjec
+    def __init__(self):
+        # super().__init__()
         self.adapters = []
+        self.threads = []
 
     def add(self, adapter):
         self.adapters.append(adapter)
 
     def start(self):
-        for a in self.adapters:
-            a.start()
+        for adapter in self.adapters:
+            thread = QThread()
+            adapter.moveToThread(thread)
+
+            thread.started.connect(adapter.start)
+            self.threads.append((adapter, thread))
+            # self.lifelong_objects[adapter] = thread
+            # self.threads[adapter] = thread
+            thread.start()
 
     def stop(self):
         for a in self.adapters:
