@@ -78,26 +78,11 @@ class AdapterManager(QObject):
         thread.start()
 
     def start_all(self):
-        for adapter in self.lifelong_adapters:
-            thread = QThread()
-            adapter.moveToThread(thread)
-
-            thread.started.connect(adapter.start)
-            # Wrap with lambda and send the adapter class name and result together
-            adapter.change.connect(lambda result, w=adapter:
-                                   self.ui_change.emit(type(w).__name__, result))
-
-            self.lifelong_objects[adapter] = thread
-            thread.start()
+        self.polling.start()
 
     def stop_all(self):
         """Stop all adapters and safely exit the thread"""
-        for adapter, thread in self.lifelong_objects.items():
-            adapter.stop()
-            thread.quit()
-            thread.wait()
-            adapter.deleteLater()
-            thread.deleteLater()
+        self.polling.stop()
 
     def ui_launched(self):
         pass
