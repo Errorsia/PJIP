@@ -32,6 +32,7 @@ class AdapterManager(QObject):
 
         self.init_threadpools()
         self.init_workers()
+        self.connect_signals()
         self.start_all()
 
     def init_threadpools(self):
@@ -76,6 +77,13 @@ class AdapterManager(QObject):
         self.lifelong_objects[self.run_taskmgr_adapter] = thread
 
         thread.start()
+
+    def connect_signals(self):
+        for adapter in self.polling.adapters:
+            adapter.change.connect(
+                lambda result, w=adapter:
+                self.ui_change.emit(type(w).__name__, result)
+            )
 
     def start_all(self):
         self.polling.start()
