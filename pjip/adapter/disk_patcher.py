@@ -18,3 +18,21 @@ class TaskDispatcher(QObject):
 
     def wait(self):
         self.pool.waitForDone()
+
+
+class FutureRunnable(QRunnable):
+    def __init__(self, fn, *args, callback=None, error_callback=None):
+        super().__init__()
+        self.fn = fn
+        self.args = args
+        self.callback = callback
+        self.error_callback = error_callback
+
+    def run(self):
+        try:
+            result = self.fn(*self.args)
+            if self.callback:
+                self.callback(result)
+        except Exception as e:
+            if self.error_callback:
+                self.error_callback(e)
