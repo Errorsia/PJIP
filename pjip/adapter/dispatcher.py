@@ -3,6 +3,9 @@ from PySide6.QtCore import QObject, QThreadPool, QRunnable, Signal
 class TaskDispatcher(QObject):
     task_error = Signal(Exception)
     task_finished = Signal(object)
+    task_return = Signal(object)
+    task_middle = Signal(object)
+    task_external_action = Signal(object)
 
     def __init__(self, max_threads=4):
         super().__init__()
