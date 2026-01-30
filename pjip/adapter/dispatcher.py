@@ -22,6 +22,18 @@ class TaskDispatcher(QObject):
         """
         self.pool.start(runnable, priority)
 
+    def injected_submit(self, runnable, priority=0):
+        runnable.callback = lambda v: self.task_return.emit(v)
+        runnable.error_callback = lambda e: self.task_error.emit(e)
+
+        if hasattr(runnable, "middle_callback"):
+            runnable.middle_callback = lambda v: self.task_middle.emit(v)
+
+        if hasattr(runnable, "external_callback"):
+            runnable.external_callback = lambda v: self.task_external_action.emit(v)
+
+        self.pool.start(runnable, priority)
+
     def submit_daemon(self, runnable, priority=0):
         """
         runnable: QRunnable
