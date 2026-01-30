@@ -45,7 +45,7 @@ class TaskDispatcher(QObject):
         self.pool.waitForDone()
 
 
-class FutureRunnable(QRunnable):
+class BaseRunnable(QRunnable):
     def __init__(self, fn, *args, callback=None, error_callback=None):
         super().__init__()
         self.fn = fn
@@ -87,7 +87,7 @@ class AdvanceRunnable(QRunnable):
             if self.finished_callback:
                 self.finished_callback(None)
 
-# task = FutureRunnable(
+# task = BaseRunnable(
 #     self.logic.terminate_process,
 #     pid,
 #     callback=lambda r: print("done"),
