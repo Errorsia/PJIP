@@ -67,17 +67,20 @@ class AdapterManager(QObject):
         self.init_run_taskmgr_adapter()
 
     def init_run_taskmgr_adapter(self):
-        thread = QThread()
-        self.run_taskmgr_adapter.moveToThread(thread)
-
-        thread.started.connect(self.run_taskmgr_adapter.start)
+        # WILL BE DELETED IN NEXT VERSION
+        # thread = QThread()
+        # self.run_taskmgr_adapter.moveToThread(thread)
+        #
+        # thread.started.connect(self.run_taskmgr_adapter.start)
 
         self.run_taskmgr_adapter.change.connect(lambda result, w=self.run_taskmgr_adapter:
                                                 self.ui_change.emit(type(w).__name__, result))
 
-        self.lifelong_objects[self.run_taskmgr_adapter] = thread
+        # self.lifelong_objects[self.run_taskmgr_adapter] = thread
 
-        thread.start()
+        self.polling.add(self.run_taskmgr_adapter)
+
+        # thread.start()
 
     def connect_signals(self):
         for adapter in self.polling.adapters:
