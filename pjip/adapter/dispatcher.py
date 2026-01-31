@@ -38,13 +38,6 @@ class TaskDispatcher(QObject):
 
         pool.start(runnable, priority)
 
-    def submit_daemon(self, runnable, priority=0):
-        """
-        runnable: QRunnable
-        priority: int (higher = more important)
-        """
-        self.daemon_pool.start(runnable, priority)
-
     def wait(self):
         self.pool.waitForDone()
 
