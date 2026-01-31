@@ -90,3 +90,27 @@ class TerminatePIDTaskTest(AdvanceRunnable):
                 self.logic.terminate_process(pid)
             except RuntimeError as err:
                 print(err)
+                self.error_callback.emit(err)
+
+class TaskmgrRunner(AdvanceRunnable):
+    def __init__(self, logic):
+        super().__init__(fn=self.run_task)
+        self.logic = logic
+        self.middle_callback = None
+        self.external_callback = None
+
+    def run_task(self):
+        for i in range(30):
+            if self.middle_callback:
+                self.middle_callback(i)
+
+            if self.logic.get_process_state("taskmgr.exe"):
+                if self.external_callback:
+                    self.external_callback("top_taskmgr")
+                return "success"
+
+            # time.sleep(0.1)
+
+        return "timeout"
+
+
