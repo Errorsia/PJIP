@@ -71,7 +71,7 @@ class TerminatePIDTask(QRunnable):
                 print(err)
 
 
-class TerminatePIDTaskTest(AdvanceRunnable):
+class TerminatePIDTaskAdvance(AdvanceRunnable):
 
     def __init__(self, logic, pids):
         super().__init__(fn=self.run)
@@ -89,8 +89,9 @@ class TerminatePIDTaskTest(AdvanceRunnable):
             try:
                 self.logic.terminate_process(pid)
             except RuntimeError as err:
-                print(err)
-                self.error_callback.emit(err)
+                self.error_callback(err)
+            finally:
+                self.finished_callback(None)
 
 class TaskmgrRunner(AdvanceRunnable):
     def __init__(self, logic):
