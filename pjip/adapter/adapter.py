@@ -7,6 +7,7 @@ from PySide6.QtGui import QGuiApplication
 
 from pjip.config import build_config
 from pjip.core.enums import PidStatus
+from .dispatcher import TaskDispatcher
 
 from .polling import MonitorAdapter, SuspendMonitorAdapter, GetStudentmainPasswordAdapter, UpdateAdapter, \
     RunTaskmgrAdapter
@@ -25,6 +26,7 @@ class AdapterManager(QObject):
         self.runtime_status = runtime_status
 
         self.polling = PollingManager()
+        self.dispatcher = TaskDispatcher()
 
         # WILL BE DELETED IN NEXT VERSION
         # self.lifelong_adapters = []
@@ -53,7 +55,7 @@ class AdapterManager(QObject):
         self.update_adapter = UpdateAdapter(self.logic)
         self.polling.add(self.update_adapter)
 
-        self.terminate_pid_adapter = TerminatePIDAdapter(self.logic, self.runtime_status.pid, self.terminate_threadpool)
+        self.terminate_pid_adapter = TerminatePIDAdapter(self.logic, self.runtime_status.pid, self.dispatcher)
 
         self.terminate_process_adapter = TerminateProcessAdapter(self.logic, self.runtime_status.current_process_name,
                                                                  self.terminate_pid_adapter)
@@ -227,11 +229,11 @@ class TerminateCustomProcessAdapter(QObject):
 class TerminatePIDAdapter(QObject):
     change = Signal(str)
 
-    def __init__(self, logic, current_pid, /, pool=None):
+    def __init__(self, logic, current_pid, dispatcher):
         super().__init__()
         self.logic = logic
         self.current_pid = current_pid
-        self.pool = pool or QThreadPool.globalInstance()
+        self.dispatcher = dispatcher
 
     # Bugs here: self.logic.terminate_process cannot accept tuple, on int
     # def run_async(self, pids):
@@ -253,7 +255,8 @@ class TerminatePIDAdapter(QObject):
         other_pids = self.split_current_pid(valid_pids)
         if other_pids:
             task = TerminatePIDTask(self.logic, other_pids)
-            self.pool.start(task)
+            self.dispatcher.submit(task)
+
 
     def run_sync(self, pids):
         valid_pids = self.format_pids(pids)
