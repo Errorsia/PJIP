@@ -68,7 +68,7 @@ class TerminatePIDTask(QRunnable):
             try:
                 self.logic.terminate_process(pid)
             except RuntimeError as err:
-                print(err)
+                print(f"Error occurred in terminate pid task: {err}")
 
 
 class TerminatePIDTaskAdvance(AdvanceRunnable):

@@ -174,7 +174,7 @@ class MainWidget(QWidget):
         self.update_page.set_adapter(self.adapter)
 
     def signal_handler(self, name, value):
-        print(f'Signal in main widget: {name}, {value}')
+        print(f'Signal: {name}, {value}')
         match name:
             case 'MonitorAdapter':
                 self.tool_page.ui_change.emit(name, value)
