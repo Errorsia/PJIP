@@ -1,8 +1,8 @@
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QWidget, QLabel, QPushButton, QGridLayout, QVBoxLayout, QHBoxLayout, \
-    QSizePolicy, QStackedWidget, QLayout, QButtonGroup, QRadioButton
+from PySide6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, \
+    QSizePolicy, QStackedWidget, QLayout, QButtonGroup
 
-from .pages import ToolPage
+from .pages import ToolPage, FunctionPage, SettingsPage, UpdatePage
 
 
 class MainWidget(QWidget):
