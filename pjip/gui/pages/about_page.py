@@ -2,21 +2,16 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QVBoxLayout
 
 from .page_updating import PageUpdating
-from .page_format import RequireNameMixin
 
 
-class AboutPage(QWidget, RequireNameMixin):
+class AboutPage(QWidget):
     ui_change = Signal(str, object)
 
     def __init__(self):
         super().__init__()
-        self.page_name = None
-
-        self.set_page_name()
-        self.init_ui()
-
-    def set_page_name(self):
         self.page_name = 'About'
+
+        self.init_ui()
 
     def init_ui(self):
         main_layout = QVBoxLayout()

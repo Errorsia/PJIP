@@ -1,21 +1,16 @@
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QSizePolicy, QButtonGroup, QRadioButton
 
-from pjip.gui.pages.page_format import RequireNameMixin
 
-
-class SettingsPage(QWidget, RequireNameMixin):
+class SettingsPage(QWidget):
     ui_change = Signal(str, object)
 
     def __init__(self):
         super().__init__()
-        self.page_name = None
-        self.adapter = None
-        self.set_page_name()
-        self.init_ui()
-
-    def set_page_name(self):
         self.page_name = 'Settings'
+        self.adapter = None
+
+        self.init_ui()
 
     def init_ui(self):
         main_layout = QVBoxLayout()

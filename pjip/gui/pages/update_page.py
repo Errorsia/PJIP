@@ -2,15 +2,14 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton, QGridLayout, QVBoxLayout
 
 from pjip.core.enums import UpdateState
-from pjip.gui.pages.page_format import RequireNameMixin
 
 
-class UpdatePage(QWidget, RequireNameMixin):
+class UpdatePage(QWidget):
     ui_change = Signal(str, object)
 
     def __init__(self):
         super().__init__()
-        self.page_name = None
+        self.page_name = 'Updates'
         self.studentmain_state = None
         self.update_state_label = None
         self.current_version_label = None
@@ -18,13 +17,9 @@ class UpdatePage(QWidget, RequireNameMixin):
         self.adapter = None
         self.current_version = None
 
-        self.set_page_name()
         self.init_ui()
 
         self.signal_connect()
-
-    def set_page_name(self):
-        self.page_name = 'Updates'
 
     def init_ui(self):
         main_layout = QVBoxLayout()

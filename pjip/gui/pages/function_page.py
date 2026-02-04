@@ -2,25 +2,19 @@ from PySide6.QtCore import Signal, QTimer
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, \
     QSizePolicy, QLineEdit
 
-from pjip.gui.pages.page_format import RequireNameMixin
 
-
-class FunctionPage(QWidget, RequireNameMixin):
+class FunctionPage(QWidget):
     ui_change = Signal(str, object)
 
     def __init__(self):
         super().__init__()
-        self.page_name = None
+        self.page_name = 'Function'
         self.adapter = None
         self.custom_terminate_btn = None
         self.custom_process_input = None
 
-        self.set_page_name()
         self.signal_connect()
         self.init_ui()
-
-    def set_page_name(self):
-        self.page_name = 'Function'
 
     def init_ui(self):
         main_layout = QVBoxLayout()
