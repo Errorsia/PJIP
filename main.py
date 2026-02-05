@@ -4,8 +4,8 @@ from PySide6.QtWidgets import QApplication
 
 from pjip.core import logic, service
 from pjip.config.runtime_status import RuntimeStatus
-from pjip.gui import adapter
-from pjip.gui import gui
+from pjip.adapter import AdapterManager
+from pjip.gui import MainWindow
 from pjip.config import build_config
 
 
@@ -15,8 +15,8 @@ class PJIPMain:
 
         self.logic = logic.PJIPLogic(build_config)
         self.runtime_status = RuntimeStatus(self.logic)
-        self.gui = gui.MainWindow()
-        self.adapters = adapter.AdapterManager(self.logic, self.gui, self.runtime_status)
+        self.gui = MainWindow()
+        self.adapters = AdapterManager(self.logic, self.gui, self.runtime_status)
         self.gui.adapter_signal_connect(self.adapters)
 
         self.gui.show()

@@ -371,19 +371,26 @@ class PJIPLogic:
             return PidStatus.ERROR
 
     @staticmethod
-    def terminate_process(pid, exit_code = 1):
-        # noinspection PyUnresolvedReferences
-        h_process = win32api.OpenProcess(win32con.PROCESS_TERMINATE, False, pid)
+    def terminate_process(pid: int, exit_code = 1):
+        h_process = None
+        try:
+            # noinspection PyUnresolvedReferences
+            h_process = win32api.OpenProcess(win32con.PROCESS_TERMINATE, False, pid)
+        except pywintypes.error as err: # type: ignore
+            print(err)
+        except Exception as err:
+            print(err)
+
+        print(f'Value of h_process: {h_process}')
         if not h_process:
             # noinspection PyUnresolvedReferences
-            raise Exception(f"OpenProcess failed, error={win32api.GetLastError()}")
+            print(f"OpenProcess failed, error={win32api.GetLastError()}")
 
-        # noinspection PyUnresolvedReferences
-        win32api.TerminateProcess(h_process, exit_code)
-
-        # if not success:
-        # noinspection PyUnresolvedReferences
-        # raise Exception(f"TerminateProcess failed, error={win32api.GetLastError()}")
+            # noinspection PyUnresolvedReferences
+            raise RuntimeError(f"OpenProcess failed, error={win32api.GetLastError()}")
+        else:
+            # noinspection PyUnresolvedReferences
+            win32api.TerminateProcess(h_process, exit_code)
 
         # h_process = win32api.OpenProcess(win32con.PROCESS_TERMINATE | win32con.SYNCHRONIZE, False, pid)
         # if not h_process:
@@ -426,7 +433,7 @@ class PJIPLogic:
     # else:
     #     print("Failed to open process")
 
-    def nt_terminate_process(self, pid):
+    def nt_terminate_process(self, pid: int):
         try:
             self.nt_terminate_process.terminate(pid)
         except RuntimeError as err:
@@ -436,7 +443,7 @@ class PJIPLogic:
             return True
 
     @staticmethod
-    def is_suspended(pid):
+    def is_suspended(pid: int):
         """
         whether the certain programme is suspended
         :param pid: pid of programme
@@ -449,7 +456,7 @@ class PJIPLogic:
             return False
 
     @staticmethod
-    def suspend_process(pid):
+    def suspend_process(pid: int):
         try:
             p = psutil.Process(pid)
             p.suspend()
@@ -462,7 +469,7 @@ class PJIPLogic:
             return False
 
     @staticmethod
-    def resume_process(pid):
+    def resume_process(pid: int):
         try:
             p = psutil.Process(pid)
             p.resume()
@@ -479,7 +486,7 @@ class PJIPLogic:
         return self.config.VERSION
 
     def get_latest_version(self):
-        response = requests.get(self.config.UPDATE_URL, timeout=(3, 5)) # connect timeout, read timeout
+        response = requests.get(self.config.UPDATE_URL, timeout=(2, 4)) # connect timeout, read timeout
 
         if response.status_code == 200:
             data = response.json()
